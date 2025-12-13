@@ -1,12 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
 import random
+from pathlib import Path
 import string
 
 # constants
 MERRIAM_WEBSTER_URL = "https://www.merriam-webster.com/"
 WORD_OF_THE_DAY_URL = MERRIAM_WEBSTER_URL + "word-of-the-day/calendar"
 SEARCH_DEFINITION_URL = MERRIAM_WEBSTER_URL + "dictionary/"
+
+WORDS_REPO_FILE = "words.in"
 
 def get_word_definition(word):
     # scrape definition from merriam webster website
@@ -24,7 +27,7 @@ def get_word_definition(word):
     return definitions
     
 
-def get_random_word(no_of_words = 1):
+def scrape_words_from_merriam_web():
     # scrape word of the day url to collect words
     response = requests.get(WORD_OF_THE_DAY_URL)
     content = response.content
@@ -38,10 +41,32 @@ def get_random_word(no_of_words = 1):
         for word in words_tag:
             words.append(word.get_text())
 
-    # return word or list of words
-    if no_of_words == 1:
-        return random.choice(words)
-    return random.sample(words, no_of_words)
+    # save words to offline file
+    words_file = Path(WORDS_REPO_FILE)
+    with open(words_file, "w") as f:
+        for word in words:
+            f.write(f"{word}\n")
+    
+    print(f"Saved in {words_file}!")
+
+    return words
+
+def scrape_words_from_file(filepath):
+    words = []
+    with open(filepath, "r") as f:
+        for word in f:
+            words.append(word.strip())
+    return words
+
+def get_words():
+    # check if the input file exists
+    word_file = Path(WORDS_REPO_FILE)
+    if word_file.is_file():
+        return scrape_words_from_file(word_file)
+    else:
+        return scrape_words_from_merriam_web()
+
+
 
 def game_loop(words, choices_per_level = 5):
     NO_OF_LIVES = 5
@@ -79,13 +104,15 @@ def game_loop(words, choices_per_level = 5):
         print()
 
     print(f"\nSCORE: {score}")
-    
+
 
 
 def main():
     # quiz
-    words = get_random_word(100)
-    game_loop(words)
+
+    words = get_words()
+    given_words = random.sample(words, 100)
+    game_loop(given_words)
 
 if __name__ == "__main__":
     main()
