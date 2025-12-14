@@ -69,28 +69,9 @@ def main():
         # copy to clipboard
         text_to_copy = pd.DataFrame([choice])
         text_to_copy.to_clipboard(index=False, header=False)
-        print(f"{choice} copied to clipboard!")
+        print(f"\n{choice} copied to clipboard!")
 
-    '''
-    # get results
-    results = search_directory(search_term)
 
-    # display results
-    if len(results) == 0:
-        print("No matching result!")
-        return
-    
-    # make user choose a directory
-    choice = None
-    while choice == None:
-        choice = choose_from_result(results)
-
-    # copy to clipboard
-    text_to_copy = pd.DataFrame([choice])
-    text_to_copy.to_clipboard(index=False, header=False)
-    print(f"{choice} copied to clipboard!")
-    '''
-    
 
 if __name__ == "__main__":
     main()
