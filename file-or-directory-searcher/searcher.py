@@ -2,11 +2,12 @@ from pathlib import Path, PurePath
 import sys
 import subprocess
 import pandas as pd
+import getpass
 
-base_dir = Path("/home/maxmin2127/Documents")
+
 ignore_list = [".venv", "venv", ".git"]
 
-def search_directory(search_term):
+def search_directory(search_term, base_dir):
     #search_results = []
     results = base_dir.rglob("*")
 
@@ -36,6 +37,14 @@ def choose_from_result(results):
         print("Invalid!")
         return None
 
+def get_docs_dir():
+    base_dir = Path.home()
+    for x in base_dir.rglob("*"):
+        if x.is_dir() and x.name == "Documents":
+            return x
+
+    return None
+
 
 def main():
     # get search term from the argument
@@ -44,6 +53,25 @@ def main():
         return
     search_term = sys.argv[1]
 
+    documents_dir = get_docs_dir()
+    if documents_dir:
+        results = search_directory(search_term, documents_dir)
+        # display results
+        if len(results) == 0:
+            print("No matching result!")
+            return
+        
+        # make user choose a directory
+        choice = None
+        while choice == None:
+            choice = choose_from_result(results)
+
+        # copy to clipboard
+        text_to_copy = pd.DataFrame([choice])
+        text_to_copy.to_clipboard(index=False, header=False)
+        print(f"{choice} copied to clipboard!")
+
+    '''
     # get results
     results = search_directory(search_term)
 
@@ -61,6 +89,7 @@ def main():
     text_to_copy = pd.DataFrame([choice])
     text_to_copy.to_clipboard(index=False, header=False)
     print(f"{choice} copied to clipboard!")
+    '''
     
 
 if __name__ == "__main__":
