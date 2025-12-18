@@ -2,8 +2,6 @@ from pathlib import Path
 import os
 import time
 
-path = Path("sample_files")
-
 def get_all_files(given_files):
     files = []
     filetypes = []
@@ -53,10 +51,3 @@ def choose_from_list(files):
     except Exception:
         print("Error occurred!")
         return None
-
-    
-# def main():
-#     categorized_files = categorize_files(path)
-
-# if __name__ == "__main__":
-#     main()
