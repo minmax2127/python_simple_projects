@@ -2,7 +2,6 @@ from pathlib import Path, PurePath
 import sys
 import subprocess
 import pandas as pd
-import getpass
 
 
 ignore_list = [".venv", "venv", ".git"]
