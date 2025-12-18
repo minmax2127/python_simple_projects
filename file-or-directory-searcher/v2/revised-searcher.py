@@ -5,6 +5,7 @@ import time
 import os
 import subprocess
 import sys
+import categorizer
 
 IGNORE_LIST = [".venv", "venv", ".git", "__pycache__"]
 
@@ -30,43 +31,62 @@ def separate_dirs_and_files(results):
 
     return dirs, files
 
+
 def choose_from_result(results):
     if results:
         dirs, files = separate_dirs_and_files(results)
 
         i = 0
+        all_content = dirs
 
         if dirs:
-            # display directories
-            print(f"\nDIRECTORIES ({len(dirs)})\n")
-            for i, val in enumerate(dirs):
-                print(f"[{i + 1}] {val}")
+            print("\nDirectories")
+            print("------------\n")
+            for dir in dirs:
+                i += 1
+                print(f"  [{i}] {dir}")
 
         if files:
-            # display files
-            print(f"\nFILES ({len(files)})\n")
-            for i, val in enumerate(files):
-                print(f"[{i + 1 + len(dirs)}] {val}")
+            files_by_type = categorizer.categorize_files(files)
+            # get all content in one list
+            print("\nFiles")
+            print("-----")
 
-        # get user input
+            for key, lst in files_by_type.items():
+                print(f"\n>{key}\n")
+                all_content += lst
+                for item in lst:
+                    i += 1
+                    print(f"  [{i}] {item}")
+
         try:
-            choice = int(input("\n\nCHOICE: "))
-            # check if directory or file
-            if choice <= len(dirs):
-                return dirs[choice - 1]
-            elif choice <= len(dirs) + len(files):
-                return files[choice - len(dirs) - 1]
-
-            else:
-                return None
-
+            choice = int(input("\nChoice: "))
+            return all_content[choice - 1]
         except Exception:
-            print("Invalid!")
+            print("Error occurred!")
             return None
+            
+        
+        # # get user input
+        # try:
+        #     choice = int(input("\n\nCHOICE: "))
+        #     # check if directory or file
+        #     if choice <= len(dirs):
+        #         return dirs[choice - 1]
+        #     elif choice <= len(dirs) + len(files):
+        #         return files[choice - len(dirs) - 1]
+
+        #     else:
+        #         return None
+
+        # except Exception:
+        #     print("Invalid!")
+        #     return None
 
     
     else:
         print("No matching result!")
+
 
 def copy_to_clipboard(txt):
     # copy to clipboard
@@ -112,6 +132,7 @@ def main():
     # get results
     results = get_results(search_term)
 
+
     # Calculate and print the elapsed time
     end_time = time.perf_counter()
     elapsed_time = end_time - start_time
@@ -122,6 +143,10 @@ def main():
     
     # copy choice to clipboard
     copy_to_clipboard(choice)
+
+
+
+
 
 
 
