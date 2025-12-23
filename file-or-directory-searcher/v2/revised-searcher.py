@@ -97,10 +97,14 @@ def copy_to_clipboard(txt):
     else:
         print("Invalid!")
     
-def get_results(search_term):
-    docs_dir = get_docs_dir()
-    if not docs_dir:
-        return []
+def get_results(search_term, directory = ""):
+    if directory == "":
+        docs_dir = get_docs_dir()
+        if not docs_dir:
+            return []
+    else:
+        print(f"In Directory {directory}")
+        docs_dir = directory
 
     results = []
     search_term = search_term.lower()
@@ -119,18 +123,27 @@ def get_results(search_term):
 
 def main():
     print("File Searcher")
+    results = []
 
     start_time = time.perf_counter()
 
     # get search term from the argument
-    if(len(sys.argv) != 2):
-        print(f"Usage: {sys.argv[0]} [file]")
+    if(len(sys.argv) != 2 and len(sys.argv) != 3):
+        print(f"Usage: {sys.argv[0]} [file] [directory]")
         return
-    search_term = sys.argv[1]
+    elif(len(sys.argv) == 2):
+        search_term = sys.argv[1]
+        # get results
+        results = get_results(search_term)
+    elif(len(sys.argv) == 3):
+        search_term = sys.argv[1]
+        directory = sys.argv[2]
+        # get results
+        results = get_results(search_term, directory)
+    
 
     
-    # get results
-    results = get_results(search_term)
+    
 
 
     # Calculate and print the elapsed time
